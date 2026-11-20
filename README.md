@@ -5,6 +5,14 @@
 
 ---
 
+## 🌐 Live Application Link
+
+[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://uupvpgxea5hea723pa8mdr.streamlit.app/)
+
+🔗 **[https://uupvpgxea5hea723pa8mdr.streamlit.app/](https://uupvpgxea5hea723pa8mdr.streamlit.app/)**
+
+---
+
 ## 📌 Executive Summary & Project Overview
 
 **FootLens Analytics** is a leading sports analytics consultancy dedicated to tactical optimization, squad availability modeling, and injury mitigation in professional European football. 
