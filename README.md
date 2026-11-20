@@ -7,7 +7,7 @@
 
 ## 🌐 Live Application Link
 
-🔗 **[https://uupvpgxea5hea723pa8mdr.streamlit.app/](Live Streamlit App)**
+🔗 **[https://uupvpgxea5hea723pa8mdr.streamlit.app/]**(Live Streamlit App)
 
 ---
 
