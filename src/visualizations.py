@@ -292,9 +292,23 @@ def plot_age_vs_performance_drop(df):
     fig.update_layout(
         font={'family': 'Segoe UI, sans-serif'},
         template='plotly_white',
-        height=480,
-        legend={'orientation': 'h', 'y': 1.14, 'x': 0.05},
-        margin={'l': 10, 'r': 20, 't': 70, 'b': 40}
+        height=520,
+        title={
+            'text': '<b>Player Age vs. Team Performance Drop Index</b><br><sup>Bubble size represents FIFA Rating | Dash line shows overall linear trend</sup>',
+            'y': 0.98,
+            'x': 0.02,
+            'xanchor': 'left',
+            'yanchor': 'top'
+        },
+        legend={
+            'orientation': 'h',
+            'y': 1.04,
+            'x': 0.02,
+            'xanchor': 'left',
+            'yanchor': 'bottom',
+            'title': {'text': '<b>Tactical Unit:</b> '}
+        },
+        margin={'l': 15, 'r': 20, 't': 110, 'b': 45}
     )
     return fig
 
