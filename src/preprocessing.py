@@ -235,7 +235,49 @@ def load_and_preprocess_data(csv_path='player_injuries_impact.csv'):
     return df
 
 
+def get_player_summary(df):
+    """
+    Groups data by Player Name to calculate summary stats across all three
+    injury phases: Before, During (Absence), and After (Return).
+    Returns a player-level aggregated DataFrame.
+    Required by Step 2 of the assessment brief.
+    """
+    player_summary = df.groupby('Player_Name').agg(
+        Club=('Club', 'first'),
+        Position=('Position', 'first'),
+        Age=('Age', 'first'),
+        FIFA_Rating=('FIFA rating', 'first'),
+        Total_Injuries=('Injury', 'count'),
+        # Phase 1: Before injury (player present)
+        Avg_Pre_Injury_Rating=('Pre_Injury_Avg_Rating', 'mean'),
+        Avg_Pre_Injury_Team_PPM=('Pre_Injury_Team_PPM', 'mean'),
+        Avg_Pre_Injury_Team_GD=('Pre_Injury_Team_Avg_GD', 'mean'),
+        # Phase 2: During absence (player missing)
+        Avg_During_Absence_Team_PPM=('During_Absence_Team_PPM', 'mean'),
+        Avg_During_Absence_Team_GD=('During_Absence_Team_Avg_GD', 'mean'),
+        # Phase 3: After return (player back)
+        Avg_Post_Injury_Rating=('Post_Injury_Avg_Rating', 'mean'),
+        Avg_Post_Injury_Team_PPM=('Post_Injury_Team_PPM', 'mean'),
+        Avg_Post_Injury_Team_GD=('Post_Injury_Team_Avg_GD', 'mean'),
+        # Derived metrics
+        Avg_Rating_Change=('Rating_Improvement', 'mean'),
+        Avg_Performance_Drop_Index=('Performance_Drop_Index', 'mean'),
+        Avg_Recovery_Days=('Recovery_Days', 'mean'),
+        Total_Days_Lost=('Recovery_Days', 'sum')
+    ).reset_index()
+
+    # Round numeric columns for readability
+    numeric_cols = player_summary.select_dtypes(include='number').columns
+    player_summary[numeric_cols] = player_summary[numeric_cols].round(3)
+
+    return player_summary.sort_values(by='Total_Injuries', ascending=False)
+
+
 if __name__ == '__main__':
     clean_df = load_and_preprocess_data()
     print("Preprocessed DataFrame successfully! Shape:", clean_df.shape)
     print("Columns sample:", clean_df[['Player_Name', 'Club', 'Injury_Category', 'Performance_Drop_Index', 'Rating_Improvement']].head())
+
+    print("\nPlayer Summary (grouped by Player Name):")
+    summary = get_player_summary(clean_df)
+    print(summary.head(10).to_string(index=False))

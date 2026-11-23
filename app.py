@@ -11,7 +11,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 
 # Local imports
-from src.preprocessing import load_and_preprocess_data
+from src.preprocessing import load_and_preprocess_data, get_player_summary
 from src.visualizations import (
     plot_top_injuries_performance_drop,
     plot_player_performance_timeline,
@@ -618,6 +618,17 @@ with tab6:
         )
         st.markdown("<b>Pre vs. Post Injury Ratings by Tactical Position:</b>", unsafe_allow_html=True)
         st.dataframe(pv_pos.style.format('{:.2f}'), use_container_width=True)
+
+        # Player-level grouped summary (Step 2 requirement: groupby Player Name)
+        st.markdown("<b>Player Summary — Grouped by Player Name (Before, During & After Phases):</b>", unsafe_allow_html=True)
+        st.caption("Summary statistics computed across all injury phases for each player using groupby aggregation.")
+        player_grp = get_player_summary(filtered_df)
+        st.dataframe(player_grp[[
+            'Player_Name', 'Club', 'Total_Injuries',
+            'Avg_Pre_Injury_Rating', 'Avg_Post_Injury_Rating', 'Avg_Rating_Change',
+            'Avg_Pre_Injury_Team_PPM', 'Avg_During_Absence_Team_PPM', 'Avg_Post_Injury_Team_PPM',
+            'Avg_Performance_Drop_Index', 'Avg_Recovery_Days', 'Total_Days_Lost'
+        ]], use_container_width=True, height=380)
 
     # Question 4
     with st.expander("❓ Question 4: Are there specific months or clubs with frequent injury clusters?", expanded=True):
