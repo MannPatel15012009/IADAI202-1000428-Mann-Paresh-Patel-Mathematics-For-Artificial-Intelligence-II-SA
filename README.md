@@ -215,6 +215,11 @@ The raw dataset (`player_injuries_impact.csv`) contains 656 rows and 42 columns,
      - **Phase 2 (During Absence):** `Avg_During_Absence_Team_PPM`, `Avg_During_Absence_Team_GD` (player sidelined, matches missed)
      - **Phase 3 (After Return):** `Avg_Post_Injury_Rating`, `Avg_Post_Injury_Team_PPM`, `Avg_Post_Injury_Team_GD` (player recovered, comeback matches)
      - **Derived Longitudinal Impact:** `Total_Injuries`, `Avg_Rating_Change` (ΔR), `Avg_Performance_Drop_Index` (PDI), `Avg_Recovery_Days`, and `Total_Days_Lost`.
+10. **Exploratory Data Analysis: `groupby()` and `agg()` Functions (Step 3 Requirement):**
+   * Dedicated, reusable analytical functions in `src/preprocessing.py`:
+     - **`get_most_injured_players(df, top_n)`:** Employs `df.groupby(['Player_Name', 'Club', 'Position']).agg(...)` to find players with the most injuries, total recovery days lost, and average absence length.
+     - **`get_frequent_injury_clubs(df)`:** Employs `df.groupby('Club').agg(...)` to rank all 8 Premier League clubs by total injury incidents, total days lost, and net performance drop ($PDI$).
+     - **`get_player_comeback_and_decline(df)`:** Employs `df.groupby(['Player_Name', 'Club', 'Position']).agg(...)` to calculate average comeback form improvements ($\Delta R > 0$) versus severe post-injury form declines ($\Delta R < 0$).
 
 ---
 

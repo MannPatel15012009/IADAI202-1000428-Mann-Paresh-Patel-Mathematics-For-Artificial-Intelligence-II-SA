@@ -286,6 +286,68 @@ def get_player_summary(df):
     return player_summary.sort_values(by='Total_Injuries', ascending=False)
 
 
+# =============================================================================
+# STEP 3 REQUIREMENTS: Dedicated groupby() and agg() Exploratory Functions
+# =============================================================================
+
+def get_most_injured_players(df, top_n=10):
+    """
+    STEP 3 REQUIREMENT:
+    Uses groupby() and agg() to find players with the most injuries.
+    Aggregates total injury count, total days lost, and average days per injury.
+    """
+    return df.groupby(['Player_Name', 'Club', 'Position']).agg(
+        Total_Injuries=('Injury', 'count'),
+        Total_Days_Lost=('Recovery_Days', 'sum'),
+        Avg_Days_Per_Injury=('Recovery_Days', 'mean'),
+        Avg_Rating_Improvement=('Rating_Improvement', 'mean')
+    ).reset_index().sort_values(by='Total_Injuries', ascending=False).head(top_n)
+
+
+def get_frequent_injury_clubs(df):
+    """
+    STEP 3 REQUIREMENT:
+    Uses groupby() and agg() to find clubs with frequent injury cases.
+    Aggregates total injuries, total days lost, and average team performance drop.
+    """
+    return df.groupby('Club').agg(
+        Total_Injuries=('Injury', 'count'),
+        Total_Days_Lost=('Recovery_Days', 'sum'),
+        Avg_Days_Per_Injury=('Recovery_Days', 'mean'),
+        Avg_Performance_Drop=('Performance_Drop_Index', 'mean'),
+        Avg_GD_Drop=('Team_GD_Drop', 'mean')
+    ).reset_index().sort_values(by='Total_Injuries', ascending=False)
+
+
+def get_player_comeback_and_decline(df):
+    """
+    STEP 3 REQUIREMENT:
+    Uses groupby() and agg() to find players who showed major improvement
+    or decline after injury (based on post-injury rating vs. pre-injury baseline).
+    Returns a dictionary containing 'top_comebacks' and 'top_declines'.
+    """
+    valid = df.dropna(subset=['Pre_Injury_Avg_Rating', 'Post_Injury_Avg_Rating'])
+    player_deltas = valid.groupby(['Player_Name', 'Club', 'Position']).agg(
+        Pre_Injury_Rating=('Pre_Injury_Avg_Rating', 'mean'),
+        Post_Injury_Rating=('Post_Injury_Avg_Rating', 'mean'),
+        Avg_Rating_Improvement=('Rating_Improvement', 'mean'),
+        Injury_Count=('Injury', 'count')
+    ).reset_index()
+
+    player_deltas['Avg_Rating_Improvement'] = player_deltas['Avg_Rating_Improvement'].round(2)
+    player_deltas['Pre_Injury_Rating'] = player_deltas['Pre_Injury_Rating'].round(2)
+    player_deltas['Post_Injury_Rating'] = player_deltas['Post_Injury_Rating'].round(2)
+
+    top_comebacks = player_deltas.sort_values(by='Avg_Rating_Improvement', ascending=False).head(10)
+    top_declines = player_deltas.sort_values(by='Avg_Rating_Improvement', ascending=True).head(10)
+
+    return {
+        'all_players': player_deltas,
+        'top_comebacks': top_comebacks,
+        'top_declines': top_declines
+    }
+
+
 if __name__ == '__main__':
     clean_df = load_and_preprocess_data()
     print("Preprocessed DataFrame successfully! Shape:", clean_df.shape)
