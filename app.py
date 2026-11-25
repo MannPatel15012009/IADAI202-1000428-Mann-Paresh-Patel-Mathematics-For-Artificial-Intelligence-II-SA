@@ -10,13 +10,55 @@ import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
 
-# Local imports
-from src.preprocessing import (
-    load_and_preprocess_data,
-    get_player_summary,
-    get_top_5_impact_injuries,
-    get_pre_post_pivot_table
-)
+# Local imports with auto-reload protection for cloud deployments
+import importlib
+import src.preprocessing as preprocessing_module
+try:
+    importlib.reload(preprocessing_module)
+except Exception:
+    pass
+
+try:
+    from src.preprocessing import (
+        load_and_preprocess_data,
+        get_player_summary,
+        get_top_5_impact_injuries,
+        get_pre_post_pivot_table
+    )
+except ImportError:
+    load_and_preprocess_data = preprocessing_module.load_and_preprocess_data
+    get_player_summary = getattr(preprocessing_module, 'get_player_summary', None)
+
+    def get_top_5_impact_injuries(df, min_incidents=2, metric='ppm_drop'):
+        sort_col = 'Avg_GD_Drop' if metric == 'gd_drop' else 'Avg_PPM_Drop'
+        inj_impact = df.groupby('Injury').agg(
+            Incident_Count=('Injury', 'count'),
+            Avg_PPM_Drop=('Performance_Drop_Index', 'mean'),
+            Avg_GD_Drop=('Team_GD_Drop', 'mean'),
+            Avg_Recovery_Days=('Recovery_Days', 'mean')
+        ).reset_index()
+        inj_filtered = inj_impact[inj_impact['Incident_Count'] >= min_incidents]
+        top_5 = inj_filtered.sort_values(by=sort_col, ascending=False).head(5)
+        top_5['Avg_PPM_Drop'] = top_5['Avg_PPM_Drop'].round(2)
+        top_5['Avg_GD_Drop'] = top_5['Avg_GD_Drop'].round(2)
+        top_5['Avg_Recovery_Days'] = top_5['Avg_Recovery_Days'].round(1)
+        return top_5
+
+    def get_pre_post_pivot_table(df):
+        valid = df.dropna(subset=['Pre_Injury_Avg_Rating', 'Post_Injury_Avg_Rating']).copy()
+        pv = valid.pivot_table(
+            index='Position_Group',
+            values=[
+                'Pre_Injury_Avg_Rating',
+                'Post_Injury_Avg_Rating',
+                'Rating_Improvement',
+                'Pre_Injury_Team_PPM',
+                'Post_Injury_Team_PPM'
+            ],
+            aggfunc='mean'
+        ).round(2).reset_index()
+        cols = ['Position_Group', 'Pre_Injury_Avg_Rating', 'Post_Injury_Avg_Rating', 'Rating_Improvement', 'Pre_Injury_Team_PPM', 'Post_Injury_Team_PPM']
+        return pv[[c for c in cols if c in pv.columns]]
 from src.visualizations import (
     plot_top_injuries_performance_drop,
     plot_player_performance_timeline,
