@@ -311,7 +311,7 @@ git push -u origin main
 
 ---
 
-## 🎓 Academic Integrity & Course Information
+## 🎓Course Information
 * **Course:** Mathematics for AI-II
 * **Assessment:** Summative Assessment (60 Marks)
 * **Firm Scenario:** FootLens Analytics (Sports Data Science)
