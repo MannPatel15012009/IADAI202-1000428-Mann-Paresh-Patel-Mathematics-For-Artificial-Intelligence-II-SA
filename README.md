@@ -220,6 +220,35 @@ The raw dataset (`player_injuries_impact.csv`) contains 656 rows and 42 columns,
      - **`get_most_injured_players(df, top_n)`:** Employs `df.groupby(['Player_Name', 'Club', 'Position']).agg(...)` to find players with the most injuries, total recovery days lost, and average absence length.
      - **`get_frequent_injury_clubs(df)`:** Employs `df.groupby('Club').agg(...)` to rank all 8 Premier League clubs by total injury incidents, total days lost, and net performance drop ($PDI$).
      - **`get_player_comeback_and_decline(df)`:** Employs `df.groupby(['Player_Name', 'Club', 'Position']).agg(...)` to calculate average comeback form improvements ($\Delta R > 0$) versus severe post-injury form declines ($\Delta R < 0$).
+11. **Top 5 Injuries with Highest Impact on Team Performance (Step 3 Requirement):**
+   * Implemented via `get_top_5_impact_injuries(df)` in `src/preprocessing.py` and featured at the top of Tab 1 on the dashboard:
+
+| Injury Diagnosis | Cases ($N$) | Avg PPM Drop (Points Lost) | Avg Goal Difference Drop | Avg Days Lost |
+| :--- | :---: | :---: | :---: | :---: |
+| **Quarantine / COVID Protocol** | 2 | **+3.00 pts** | +4.17 | 8.0 days |
+| **Back Problems** | 2 | **+1.67 pts** | +1.67 | 33.5 days |
+| **Chest Injury** | 2 | **+1.33 pts** | +1.25 | 38.5 days |
+| **Inner Ligament Injury** | 2 | **+1.33 pts** | +1.33 | 83.0 days |
+| **Neck Injury** | 2 | **+1.33 pts** | +1.67 | 6.0 days |
+
+12. **Pre- vs. Post-Injury Performance Comparison using `pivot_table` (Step 3 Requirement):**
+   * Implemented via `get_pre_post_pivot_table(df)` in `src/preprocessing.py` and featured at the top of Tab 1 and Tab 6 on the dashboard:
+
+```python
+# Exact pandas call:
+pivot_df = valid.pivot_table(
+    index='Position_Group',
+    values=['Pre_Injury_Avg_Rating', 'Post_Injury_Avg_Rating', 'Rating_Improvement', 'Pre_Injury_Team_PPM', 'Post_Injury_Team_PPM'],
+    aggfunc='mean'
+)
+```
+
+| Tactical Position Unit | Pre-Injury Rating | Post-Injury Rating | Rating Improvement ($\Delta R$) | Pre-Injury Team PPM | Post-Injury Team PPM |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| **Goalkeepers** | 6.81 | 6.80 | -0.01 | 1.46 | 1.62 |
+| **Midfielders** | 6.49 | 6.49 | 0.00 | 1.45 | 1.58 |
+| **Defenders** | 6.41 | 6.38 | -0.03 | 1.46 | 1.43 |
+| **Forwards** | 6.33 | 6.34 | +0.01 | 1.46 | 1.50 |
 
 ---
 

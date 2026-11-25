@@ -11,7 +11,12 @@ import plotly.express as px
 import plotly.graph_objects as go
 
 # Local imports
-from src.preprocessing import load_and_preprocess_data, get_player_summary
+from src.preprocessing import (
+    load_and_preprocess_data,
+    get_player_summary,
+    get_top_5_impact_injuries,
+    get_pre_post_pivot_table
+)
 from src.visualizations import (
     plot_top_injuries_performance_drop,
     plot_player_performance_timeline,
@@ -295,6 +300,48 @@ with tab1:
     Quantifying the structural gap left by absent squad members. We measure the drop in **Points Per Match (PPM)** 
     by comparing the club's results in the 3 games immediately prior to the injury versus the 3 matches missed.
     """)
+
+    # ---------------------------------------------------------
+    # STEP 3 HIGHLIGHT: Top 5 Injuries Impact & Pivot Table
+    # ---------------------------------------------------------
+    st.markdown("#### 🔍 Step 3 Spotlight: Top 5 High-Impact Injuries & Pre vs. Post Pivot Table")
+    st.caption("Direct implementation of Step 3: Identifying top 5 severe performance-drop injuries and multi-phase comparison via pandas `.pivot_table()`.")
+
+    col_spot1, col_spot2 = st.columns([1, 1])
+    with col_spot1:
+        st.markdown("<b>🚨 Top 5 Injuries with Highest Impact on Team Performance:</b>", unsafe_allow_html=True)
+        top5_df = get_top_5_impact_injuries(filtered_df)
+        st.dataframe(
+            top5_df,
+            column_config={
+                "Injury": "Injury Diagnosis",
+                "Incident_Count": "Cases",
+                "Avg_PPM_Drop": st.column_config.NumberColumn("Avg PPM Drop", format="%+.2f pts"),
+                "Avg_GD_Drop": st.column_config.NumberColumn("Avg GD Drop", format="%+.2f"),
+                "Avg_Recovery_Days": st.column_config.NumberColumn("Avg Days", format="%.1f d")
+            },
+            use_container_width=True,
+            hide_index=True
+        )
+
+    with col_spot2:
+        st.markdown("<b>🔄 Pre vs. Post-Injury Performance by Position (pandas `.pivot_table()`):</b>", unsafe_allow_html=True)
+        pv_df = get_pre_post_pivot_table(filtered_df)
+        st.dataframe(
+            pv_df,
+            column_config={
+                "Position_Group": "Tactical Unit",
+                "Pre_Injury_Avg_Rating": st.column_config.NumberColumn("Pre Rating", format="%.2f"),
+                "Post_Injury_Avg_Rating": st.column_config.NumberColumn("Post Rating", format="%.2f"),
+                "Rating_Improvement": st.column_config.NumberColumn("ΔR Form", format="%+.2f"),
+                "Pre_Injury_Team_PPM": st.column_config.NumberColumn("Pre Team PPM", format="%.2f"),
+                "Post_Injury_Team_PPM": st.column_config.NumberColumn("Post Team PPM", format="%.2f")
+            },
+            use_container_width=True,
+            hide_index=True
+        )
+
+    st.markdown("<hr style='margin: 15px 0 25px 0;'>", unsafe_allow_html=True)
 
     col1, col2 = st.columns([3, 2])
     with col1:

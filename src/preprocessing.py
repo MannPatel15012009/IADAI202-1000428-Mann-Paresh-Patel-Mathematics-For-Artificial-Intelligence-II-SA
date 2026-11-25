@@ -348,6 +348,55 @@ def get_player_comeback_and_decline(df):
     }
 
 
+def get_top_5_impact_injuries(df, min_incidents=2, metric='ppm_drop'):
+    """
+    STEP 3 REQUIREMENT:
+    Identifies the top 5 injuries with the highest impact on team performance
+    (measured by team Points Per Match drop or Goal Difference drop).
+    """
+    sort_col = 'Avg_GD_Drop' if metric == 'gd_drop' else 'Avg_PPM_Drop'
+    inj_impact = df.groupby('Injury').agg(
+        Incident_Count=('Injury', 'count'),
+        Avg_PPM_Drop=('Performance_Drop_Index', 'mean'),
+        Avg_GD_Drop=('Team_GD_Drop', 'mean'),
+        Avg_Recovery_Days=('Recovery_Days', 'mean')
+    ).reset_index()
+
+    inj_filtered = inj_impact[inj_impact['Incident_Count'] >= min_incidents]
+    top_5 = inj_filtered.sort_values(by=sort_col, ascending=False).head(5)
+
+    top_5['Avg_PPM_Drop'] = top_5['Avg_PPM_Drop'].round(2)
+    top_5['Avg_GD_Drop'] = top_5['Avg_GD_Drop'].round(2)
+    top_5['Avg_Recovery_Days'] = top_5['Avg_Recovery_Days'].round(1)
+    return top_5
+
+
+def get_pre_post_pivot_table(df):
+    """
+    STEP 3 REQUIREMENT:
+    Uses pandas .pivot_table() to compare metrics like pre- and post-injury performance
+    across tactical position units (Goalkeepers, Defenders, Midfielders, Forwards).
+    Compares:
+      - Player Pre-Injury vs. Post-Injury Rating & Rating Delta (ΔR)
+      - Team Pre-Injury vs. Post-Injury Points Per Match (PPM)
+    """
+    valid = df.dropna(subset=['Pre_Injury_Avg_Rating', 'Post_Injury_Avg_Rating']).copy()
+    pv = valid.pivot_table(
+        index='Position_Group',
+        values=[
+            'Pre_Injury_Avg_Rating',
+            'Post_Injury_Avg_Rating',
+            'Rating_Improvement',
+            'Pre_Injury_Team_PPM',
+            'Post_Injury_Team_PPM'
+        ],
+        aggfunc='mean'
+    ).round(2).reset_index()
+
+    cols = ['Position_Group', 'Pre_Injury_Avg_Rating', 'Post_Injury_Avg_Rating', 'Rating_Improvement', 'Pre_Injury_Team_PPM', 'Post_Injury_Team_PPM']
+    return pv[[c for c in cols if c in pv.columns]]
+
+
 if __name__ == '__main__':
     clean_df = load_and_preprocess_data()
     print("Preprocessed DataFrame successfully! Shape:", clean_df.shape)
