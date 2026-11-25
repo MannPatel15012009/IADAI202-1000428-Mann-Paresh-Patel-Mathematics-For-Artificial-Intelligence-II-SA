@@ -203,6 +203,18 @@ The raw dataset (`player_injuries_impact.csv`) contains 656 rows and 42 columns,
    * `Injury_Category` (Classified into 12 clinical sports medicine units: *Hamstring*, *Knee / Ligament*, *Ankle*, *Calf / Lower Leg*, *Groin / Pelvis*, *Upper Body*, *Head / Concussion*, *Illness*, etc.)
    * `Position_Group` (*Goalkeeper*, *Defender*, *Midfielder*, *Forward*)
    * `Injury_Month` and `Injury_Year`
+8. **Renaming Unclear Column Names for Better Readability (Step 2 Requirement):**
+   * Renamed and aliased unclear/generic original dataset columns to clear, descriptive sports analytics names:
+     - `'Name'` → **`'Player_Name'`** (clarifies individual player attribution and eliminates ambiguity with team or injury names)
+     - `'Team Name'` → **`'Club'`** (standardized to standard football club terminology)
+     - Standardized intermediate match result and rating strings into clear snake_case identifiers (`Pre_Injury_Avg_Rating`, `During_Absence_Team_PPM`, `Post_Injury_Avg_Rating`, `Team_PPM_Drop`, `Recovery_Days`).
+9. **Grouping Data by Player Name Across Injury Phases (Before, During, After) (Step 2 Requirement):**
+   * Implemented the core aggregation function `get_player_summary(df)` in `src/preprocessing.py` and integrated it live in Tab 6 of the dashboard.
+   * Groups all 656 records by **`'Player_Name'`** (224 unique players) using pandas `groupby()` and `agg()` to calculate multi-phase statistics:
+     - **Phase 1 (Before Injury):** `Avg_Pre_Injury_Rating`, `Avg_Pre_Injury_Team_PPM`, `Avg_Pre_Injury_Team_GD` (player active in squad)
+     - **Phase 2 (During Absence):** `Avg_During_Absence_Team_PPM`, `Avg_During_Absence_Team_GD` (player sidelined, matches missed)
+     - **Phase 3 (After Return):** `Avg_Post_Injury_Rating`, `Avg_Post_Injury_Team_PPM`, `Avg_Post_Injury_Team_GD` (player recovered, comeback matches)
+     - **Derived Longitudinal Impact:** `Total_Injuries`, `Avg_Rating_Change` (ΔR), `Avg_Performance_Drop_Index` (PDI), `Avg_Recovery_Days`, and `Total_Days_Lost`.
 
 ---
 

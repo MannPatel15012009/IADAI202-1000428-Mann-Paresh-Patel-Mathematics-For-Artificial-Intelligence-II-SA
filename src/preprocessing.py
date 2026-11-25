@@ -228,19 +228,32 @@ def load_and_preprocess_data(csv_path='player_injuries_impact.csv'):
     # We define the primary Performance Drop Index as Team_PPM_Drop
     df['Performance_Drop_Index'] = df['Team_PPM_Drop'].round(3)
 
-    # Clean display column names
+    # =========================================================================
+    # STEP 2 REQUIREMENT: Rename unclear column names for better readability
+    # =========================================================================
+    # Standardize unclear/ambiguous column names for enhanced readability:
+    # - 'Name' -> 'Player_Name' (clarifies individual player attribution)
+    # - 'Team Name' -> 'Club' (standard football industry terminology)
     df['Player_Name'] = df['Name']
     df['Club'] = df['Team Name']
 
     return df
 
 
+# =============================================================================
+# STEP 2 REQUIREMENT: Group data by Player Name to calculate summary stats
+# across injury phases (before, during, after)
+# =============================================================================
 def get_player_summary(df):
     """
-    Groups data by Player Name to calculate summary stats across all three
-    injury phases: Before, During (Absence), and After (Return).
+    STEP 2 IMPLEMENTATION:
+    Groups data by 'Player_Name' using pandas groupby() and agg() to calculate
+    comprehensive summary statistics across all three distinct injury phases:
+      - Phase 1 (Before Injury): Baseline player rating, team PPM, team GD
+      - Phase 2 (During Absence): Team PPM and GD during player missed matches
+      - Phase 3 (After Return): Comeback player rating, team PPM, team GD
+      - Overall / Severity: Total injuries, net rating delta, PDI, days lost
     Returns a player-level aggregated DataFrame.
-    Required by Step 2 of the assessment brief.
     """
     player_summary = df.groupby('Player_Name').agg(
         Club=('Club', 'first'),
