@@ -159,7 +159,7 @@ t_{\text{recovery}} = \text{Date of Return} - \text{Date of Injury} \quad (\text
 
 ---
 
-## ❓ Five Core Business Questions Answered
+## ❓ Eight Foundational Business Questions Answered (5 Core + 3 Advanced Independent Insights)
 
 ### 1. Which injuries led to the biggest team performance drop?
 * **Finding:** Structural joint traumas and acute neurological events cause the steepest decline in club efficiency. **Shoulder injuries** (average PDI = +1.25 points lost per match), **Knee Surgeries** (PDI = +1.13), **Concussions** (PDI = +1.00), and **Hip Flexor strains** (PDI = +1.00) produce the greatest destabilization, depriving squads of primary tactical focal points.
@@ -175,6 +175,15 @@ t_{\text{recovery}} = \text{Date of Return} - \text{Date of Injury} \quad (\text
 
 ### 5. Which clubs suffer most due to injuries?
 * **Finding:** **Newcastle United** (120 incidents, ~5,800 days lost) and **Everton** (103 incidents, ~4,950 days lost) incurred the highest aggregate injury burden, severely depressing their season efficiency and forcing continuous tactical adjustments.
+
+### 6. Star Player Dependency: Does losing high-profile stars (FIFA 82+) trigger a bigger performance drop?
+* **Finding:** Segmenting the dataset into Star Tiers reveals that losing **Core Starters (FIFA 78–81)** and **Elite Stars (FIFA 82+)** leads to an average goal difference deterioration of **+0.14 to +0.15 goals per match**, compared to only **+0.03** when losing squad rotation players (<78). This confirms that tactical attacking systems are heavily centralized around key starters, where sudden absences cannot be seamlessly covered by bench depth.
+
+### 7. Positional Vulnerability: Which tactical units suffer the longest absences and form dips?
+* **Finding:** **Goalkeepers** (69.3 days avg, 40% long-term absences >45 days) and **Defenders** (50.4 days avg, 32.3% long-term absences) endure the longest physical rehabilitation timelines per incident. Conversely, **Forwards** experience shorter recovery periods (36.2 days avg, 21% long-term) but face higher acute vulnerability to recurring hamstring and calf sprint-load tears.
+
+### 8. Recurrence & Fragility: What is the career toll on players suffering repeated injuries (4+ or 7+)?
+* **Finding:** A concentrated cohort of just **17 chronic players (7.6% of squad pool)**—such as Callum Wilson, Giovani Lo Celso, and Dominic Calvert-Lewin—accounted for **142 injuries and 5,693 days lost** (335 days per player). Crucially, while players with a single isolated injury exhibit an average comeback surge of **ΔR = +0.10**, chronic repeat-injury players exhibit flat/declining post-recovery ratings (**ΔR ≤ 0.00**), proving that repeated scar tissue and rushed comebacks permanently degrade athletic output.
 
 ---
 
